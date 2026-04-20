@@ -52,3 +52,5 @@ lib/config/api_config.dart
 .env.production
 google-services.json
 GoogleService-Info.plist
+.vercel
+.env*.local
