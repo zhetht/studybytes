@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import '../models/user_model.dart';
-import '../services/local_auth_service.dart';
+import '../services/supabase_auth_service.dart';
 
 // Events
 abstract class AuthEvent extends Equatable {
@@ -56,7 +56,7 @@ class AuthError extends AuthState {
 
 // Bloc
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final LocalAuthService _authService;
+final SupabaseAuthService _authService;
 
   AuthBloc(this._authService) : super(AuthInitial()) {
     on<AuthCheckRequested>(_onCheckRequested);

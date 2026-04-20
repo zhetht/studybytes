@@ -1,14 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
+import 'config/api_config.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/bloc/auth_bloc.dart';
-import 'features/auth/services/local_auth_service.dart';
+import 'features/auth/services/supabase_auth_service.dart';
 import 'features/auth/screens/login_screen.dart';
 import 'features/home/screens/main_page.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Inicializar Supabase antes de arrancar la app
+  await Supabase.initialize(
+    url: ApiConfig.supabaseUrl,
+    anonKey: ApiConfig.supabaseAnonKey,
+  );
+
   runApp(const StudyBytesApp());
 }
+
+// Acceso global al cliente de Supabase
+final supabase = Supabase.instance.client;
 
 class StudyBytesApp extends StatelessWidget {
   const StudyBytesApp({super.key});
@@ -16,9 +29,10 @@ class StudyBytesApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RepositoryProvider(
-      create: (_) => LocalAuthService(),
+      create: (_) => SupabaseAuthService(),
       child: BlocProvider(
-        create: (context) => AuthBloc(context.read<LocalAuthService>())
+        create: (context) => AuthBloc(context.read<SupabaseAuthService>())
+
           ..add(AuthCheckRequested()),
         child: MaterialApp(
           title: 'StudyBytes',
@@ -44,11 +58,7 @@ class _AppRouter extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    Icons.school_rounded,
-                    size: 56,
-                    color: AppTheme.primaryBlue,
-                  ),
+                  Icon(Icons.school_rounded, size: 56, color: AppTheme.primaryBlue),
                   SizedBox(height: 20),
                   CircularProgressIndicator(),
                 ],
@@ -56,9 +66,7 @@ class _AppRouter extends StatelessWidget {
             ),
           );
         }
-        if (state is AuthAuthenticated) {
-          return const MainPage();
-        }
+        if (state is AuthAuthenticated) return const MainPage();
         return const LoginScreen();
       },
     );

@@ -27,25 +27,56 @@ class DocumentModel {
     this.isPremium = false,
   });
 
+  /// Construye un DocumentModel desde una fila de Supabase
+  factory DocumentModel.fromSupabase(Map<String, dynamic> row) {
+    return DocumentModel(
+      id: row['id'].toString(),
+      title: row['title'] ?? '',
+      description: row['description'] ?? '',
+      fileUrl: row['file_url'] ?? '',
+      fileType: row['file_type'] ?? 'pdf',
+      authorId: row['author_id'] ?? '',
+      authorName: row['author_name'] ?? 'Anónimo',
+      downloads: row['downloads'] ?? 0,
+      views: row['views'] ?? 0,
+      createdAt: DateTime.parse(row['created_at']),
+      tags: List<String>.from(row['tags'] ?? []),
+      isPremium: row['is_premium'] ?? false,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'description': description,
+        'file_url': fileUrl,
+        'file_type': fileType,
+        'author_id': authorId,
+        'author_name': authorName,
+        'downloads': downloads,
+        'views': views,
+        'created_at': createdAt.toIso8601String(),
+        'tags': tags,
+        'is_premium': isPremium,
+      };
+
   static final _mockTitles = [
     ('Álgebra Lineal Completa', 'pdf', false),
     ('Cálculo Diferencial e Integral', 'pdf', true),
     ('Introducción a Python', 'md', false),
     ('Física Cuántica Básica', 'pdf', true),
-    ('Estructuras de Datos', 'pdf', false),
-    ('Historia de la Revolución Industrial', 'md', false),
   ];
 
   factory DocumentModel.mock(int index) {
     final data = _mockTitles[index % _mockTitles.length];
     return DocumentModel(
-      id: 'doc_$index',
+      id: 'mock_$index',
       title: data.$1,
-      description: 'Resumen completo con ejemplos prácticos y ejercicios resueltos',
-      fileUrl: 'https://example.com/doc_$index.${data.$2}',
+      description: 'Resumen completo con ejemplos y ejercicios resueltos',
+      fileUrl: '',
       fileType: data.$2,
-      authorId: 'user_00${(index % 3) + 1}',
-      authorName: ['Ghosty', 'Usuario Test', 'MathNerd'][index % 3],
+      authorId: 'user_001',
+      authorName: 'Ghosty',
       downloads: 80 + index * 45,
       views: 320 + index * 60,
       createdAt: DateTime.now().subtract(Duration(days: index * 5)),
