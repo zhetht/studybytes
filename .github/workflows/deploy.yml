@@ -11,31 +11,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout del código
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 2. Instalar Flutter
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.24.5'
           channel: 'stable'
-          cache: true
+          cache: false    
 
-      # 3. Instalar dependencias
       - name: Install dependencies
-        run: |
-          cd studybytes
-          flutter pub get
+        working-directory: ./studybytes   
+        run: flutter pub get
 
-      # 4. Compilar para Web
       - name: Build Web
-        run: |
-          cd studybytes
-          flutter build web --release --base-href /
+        working-directory: ./studybytes
+        run: flutter build web --release --base-href /
 
-      # 5. Deployar a Vercel
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
         with:
