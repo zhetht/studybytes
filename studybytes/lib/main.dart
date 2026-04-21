@@ -7,6 +7,7 @@ import 'features/auth/bloc/auth_bloc.dart';
 import 'features/auth/services/supabase_auth_service.dart';
 import 'features/auth/screens/login_screen.dart';
 import 'features/home/screens/main_page.dart';
+import 'core/services/logger_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +17,9 @@ Future<void> main() async {
     url: ApiConfig.supabaseUrl,
     anonKey: ApiConfig.supabaseAnonKey,
   );
+
+  AppLogger.init();
+  AppLogger.info('Aplicación iniciada correctamente');
 
   runApp(const StudyBytesApp());
 }

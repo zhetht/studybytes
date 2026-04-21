@@ -119,7 +119,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 child: CircularProgressIndicator(
                                     color: Colors.white, strokeWidth: 2),
                               )
-                            : const Text('Crear Cuenta'),
+: const Text('Crear Cuenta'),
                       ),
                     );
                   },

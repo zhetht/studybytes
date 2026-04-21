@@ -97,7 +97,7 @@ final SupabaseAuthService _authService;
     if (user != null) {
       emit(AuthAuthenticated(user));
     } else {
-      emit(AuthError('El correo ya está registrado'));
+      emit(AuthError('Usuario ya existe. Usa "Iniciar Sesión" en lugar de registrarte.'));
     }
   }
 

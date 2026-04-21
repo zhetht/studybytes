@@ -7,6 +7,7 @@ import '../../../core/services/supabase_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../features/auth/bloc/auth_bloc.dart';
 import 'create_post_screen.dart';
+import '../../../../features/library/screens/upload_document_screen.dart';
 
 class PostsScreen extends StatefulWidget {
   const PostsScreen({super.key});
@@ -141,12 +142,13 @@ class _PostsScreenState extends State<PostsScreen> {
                 },
               ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           final authState = context.read<AuthBloc>().state;
           if (authState is! AuthAuthenticated) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Debes iniciar sesión para publicar')),
+              const SnackBar(content: Text('Debes iniciar sesión para crear contenido')),
             );
             return;
           }
@@ -158,9 +160,48 @@ class _PostsScreenState extends State<PostsScreen> {
           );
           if (result != null) {
             setState(() => _posts.insert(0, result));
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('¡Post publicado! 🎉')),
+            );
           }
         },
-        child: const Icon(Icons.edit_outlined),
+        icon: const Icon(Icons.edit_outlined),
+        label: const Text('Crear Post'),
+        backgroundColor: AppTheme.primaryBlue,
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: AppTheme.cardDark,
+        shape: const CircularNotchedRectangle(),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.picture_as_pdf_outlined, color: Colors.white, size: 28),
+                tooltip: 'Subir Documento',
+                onPressed: () async {
+                  final authState = context.read<AuthBloc>().state;
+                  if (authState is! AuthAuthenticated) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Debes iniciar sesión para subir documentos')),
+                    );
+                    return;
+                  }
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => UploadDocumentScreen(user: authState.user),
+                    ),
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('¡Documento subido exitosamente! 📚')),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

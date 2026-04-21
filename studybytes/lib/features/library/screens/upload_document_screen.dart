@@ -156,7 +156,7 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Selector de archivo ──────────────────────────────────
+            // Selector de archivo 
             GestureDetector(
               onTap: _isUploading ? null : _pickFile,
               child: Container(
@@ -245,7 +245,7 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
               ),
             ).animate().fadeIn(),
 
-            // ── Barra de progreso ────────────────────────────────────
+            // Barra de progreso 
             if (_isUploading) ...[
               const SizedBox(height: 16),
               ClipRRect(
@@ -259,40 +259,40 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
               ),
               const SizedBox(height: 6),
               Text(
-                '${(_uploadProgress * 100).toInt()}% subido...',
+'${(_uploadProgress * 100).toInt()}% subido...',
                 style: TextStyle(
                     color: Colors.white.withOpacity(0.4), fontSize: 12),
               ),
             ],
 
-            // ── Error ────────────────────────────────────────────────
+            // Error 
             if (_uploadError != null) ...[
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.redAccent.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.redAccent.withOpacity(0.3)),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.error_outline,
-                        color: Colors.redAccent, size: 18),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(_uploadError!,
-                          style: const TextStyle(
-                              color: Colors.redAccent, fontSize: 12)),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+  const SizedBox(height: 12),
+  Container(
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      color: Colors.redAccent.withOpacity(0.1),
+      borderRadius: BorderRadius.circular(10),
+      border: Border.all(color: Colors.redAccent.withOpacity(0.3)),
+    ),
+    child: Row(
+      children: [
+        const Icon(Icons.error_outline,
+            color: Colors.redAccent, size: 18),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            _uploadError!,
+            style: const TextStyle(fontSize: 12),
+          ),
+        ),
+      ],
+    ),
+  ),
+],
 
             const SizedBox(height: 24),
 
-            // ── Campos del formulario ────────────────────────────────
             _SectionLabel('Título *'),
             const SizedBox(height: 8),
             TextField(
@@ -309,7 +309,7 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
             const SizedBox(height: 8),
             TextField(
               controller: _descController,
-              style: const TextStyle(color: Colors.white),
+style: const TextStyle(color: Colors.white),
               maxLines: 3,
               decoration: const InputDecoration(
                 hintText: 'Describe el contenido del documento...',
@@ -325,14 +325,14 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
               style: TextStyle(color: AppTheme.lavender),
               decoration: InputDecoration(
                 hintText: 'matemáticas, cálculo, resumen',
-                hintStyle: TextStyle(color: Colors.white.withOpacity(0.2)),
+hintStyle: TextStyle(color: Colors.white.withOpacity(0.2)),
                 prefixIcon: const Icon(Icons.tag, size: 18, color: AppTheme.lavender),
               ),
             ).animate().fadeIn(delay: 200.ms),
 
             const SizedBox(height: 20),
 
-            // ── Toggle Premium ───────────────────────────────────────
+            // Toggle Premium 
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
@@ -406,3 +406,4 @@ class _SectionLabel extends StatelessWidget {
             letterSpacing: 0.5));
   }
 }
+

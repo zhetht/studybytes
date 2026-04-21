@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/user_model.dart';
+import '../../../core/services/logger_service.dart';
 
 class SupabaseAuthService {
   final supabase = Supabase.instance.client;
@@ -39,70 +40,99 @@ class SupabaseAuthService {
         email: email,
         password: password,
       );
-      return await _getUserProfile(response.user!.id);
-    } catch (e) {
+      
+      final user = await _getUserProfile(response.user!.id);
+      AppLogger.info('Usuario autenticado: $email');
+      return user;
+    } catch (e, stackTrace) {
+      AppLogger.error('Error en signInWithEmail: email=$email', e, stackTrace);
       return null;
     }
   }
 
   Future<UserModel?> signUpWithEmail(String email, String password, String name) async {
     try {
+      // 1. Registrar usuario en auth
       final response = await supabase.auth.signUp(
         email: email,
         password: password,
-        data: {'name': name},
       );
-      await _updateUserProfile(response.user!.id, name);
-      return await _getUserProfile(response.user!.id);
-    } catch (e) {
+      
+      if (response.user == null) return null;
+      
+      // 2. Crear perfil en la tabla 'profiles'
+      await supabase.from('profiles').insert({
+        'user_id': response.user!.id,  // ← Usar user_id, NO id
+        'name': name,
+        'is_premium': false,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+      
+      final user = await _getUserProfile(response.user!.id);
+      AppLogger.info('Nuevo usuario registrado: $email');
+      return user;
+    } catch (e, stackTrace) {
+      AppLogger.error('Error en signUpWithEmail: email=$email', e, stackTrace);
       return null;
     }
   }
 
   Future<void> signOut() async {
     await supabase.auth.signOut();
+    _currentUser = null;
+    _userController.add(null);
   }
 
   Future<UserModel?> getCurrentUser() async {
     final session = supabase.auth.currentSession;
-    if (session != null && _currentUser == null) {
-      _currentUser = await _getUserProfile(session.user.id);
+    if (session == null) {
+      AppLogger.warning('Intento de getCurrentUser sin sesión activa');
+      return null;
     }
+    _currentUser ??= await _getUserProfile(session.user.id);
     return _currentUser;
   }
 
   Future<UserModel?> _getUserProfile(String userId) async {
-    final response = await supabase
-        .from('profiles')
-        .select('name, is_premium')
-        .eq('id', userId)
-        .single();
-    return UserModel(
-      id: userId,
-      email: supabase.auth.currentUser?.email ?? '',
-      name: response['name'] ?? '',
-      isPremium: response['is_premium'] ?? false,
-      createdAt: DateTime.now(),
-    );
-  }
-
-  Future<void> _updateUserProfile(String userId, String name) async {
-    await supabase.from('profiles').upsert({
-      'id': userId,
-      'name': name,
-      'is_premium': false,
-    });
+    try {
+      // Buscar por user_id, NO por id
+      final response = await supabase
+          .from('profiles')
+          .select('name, is_premium')
+          .eq('user_id', userId)  // ← CORREGIDO: user_id
+          .maybeSingle();  // ← Usar maybeSingle para evitar error si no existe
+      
+      if (response == null) {
+        AppLogger.warning('Perfil no encontrado para userId: $userId');
+        return null;
+      }
+      
+      final userEmail = supabase.auth.currentUser?.email ?? '';
+      
+      return UserModel(
+        id: userId,
+        email: userEmail,
+        name: response['name'] ?? '',
+        isPremium: response['is_premium'] ?? false,
+        createdAt: DateTime.now(),
+      );
+    } catch (e, stackTrace) {
+      AppLogger.error('Error obteniendo perfil', e, stackTrace);
+      return null;
+    }
   }
 
   Future<void> upgradeToPremium(String userId) async {
     await supabase
         .from('profiles')
         .update({'is_premium': true})
-        .eq('id', userId);
-    if (_currentUser != null) {
+        .eq('user_id', userId);  // ← CORREGIDO: user_id
+    
+    if (_currentUser != null && _currentUser!.id == userId) {
       _currentUser = _currentUser!.copyWith(isPremium: true);
       _userController.add(_currentUser);
     }
+    AppLogger.info('Usuario $userId actualizado a premium');
   }
 
   void dispose() => _userController.close();
