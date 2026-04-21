@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 2. Instalar Flutter (versión estable)
+      # 2. Instalar Flutter
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -25,11 +25,15 @@ jobs:
 
       # 3. Instalar dependencias
       - name: Install dependencies
-        run: flutter pub get
+        run: |
+          cd studybytes
+          flutter pub get
 
       # 4. Compilar para Web
       - name: Build Web
-        run: flutter build web --release --base-href /
+        run: |
+          cd studybytes
+          flutter build web --release --base-href /
 
       # 5. Deployar a Vercel
       - name: Deploy to Vercel
@@ -38,5 +42,5 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          working-directory: ./build/web
+          working-directory: ./studybytes/build/web
           vercel-args: '--prod'
