@@ -17,13 +17,25 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.5'
-          channel: 'stable'
-          cache: false    
+          flutter-version: '3.41.0'
+          channel: stable
+          cache: false
 
       - name: Install dependencies
-        working-directory: ./studybytes   
+        working-directory: ./studybytes
         run: flutter pub get
+
+      - name: Create api_config.dart
+        working-directory: ./studybytes
+        run: |
+          mkdir -p lib/config
+          cat > lib/config/api_config.dart <<'EOF'
+          class ApiConfig {
+            static const String supabaseUrl = '${{ secrets.SUPABASE_URL }}';
+            static const String supabaseAnonKey = '${{ secrets.SUPABASE_ANON_KEY }}';
+            static const String geminiApiKey = '${{ secrets.GEMINI_API_KEY }}';
+          }
+          EOF
 
       - name: Build Web
         working-directory: ./studybytes
@@ -37,3 +49,4 @@ jobs:
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           working-directory: ./studybytes/build/web
           vercel-args: '--prod'
+
