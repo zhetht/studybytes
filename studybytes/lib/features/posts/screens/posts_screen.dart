@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/post_model.dart';
 import '../../../core/services/service_locator.dart';
-import '../../../core/services/supabase_service.dart';
+
 
 
 import '../../../core/theme/app_theme.dart';

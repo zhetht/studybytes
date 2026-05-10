@@ -3,7 +3,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/document_model.dart';
-import '../../../core/services/supabase_service.dart';
+import '../../../core/services/service_locator.dart';
+
 import '../../../core/theme/app_theme.dart';
 import '../../../features/auth/bloc/auth_bloc.dart';
 import 'upload_document_screen.dart';
@@ -17,7 +18,8 @@ class LibraryScreen extends StatefulWidget {
 
 class _LibraryScreenState extends State<LibraryScreen> {
   final _searchController = TextEditingController();
-  final _service = SupabaseService();
+  final _service = ServiceLocator().supabaseService;
+
   String _filter = 'Todos';
   List<DocumentModel> _docs = [];
   bool _isLoading = true;

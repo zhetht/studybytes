@@ -4,7 +4,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../core/services/supabase_service.dart';
+import '../../../core/services/service_locator.dart';
+
 import '../../../core/theme/app_theme.dart';
 import '../../../features/auth/models/user_model.dart';
 
@@ -20,7 +21,8 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
   final _titleController = TextEditingController();
   final _descController = TextEditingController();
   final _tagsController = TextEditingController();
-  final _service = SupabaseService();
+  final _service = ServiceLocator().supabaseService;
+
 
   PlatformFile? _pickedFile;
   bool _isPremium = false;
@@ -102,8 +104,7 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
             : _descController.text.trim(),
         fileUrl: fileUrl,
         fileType: ext,
-        authorId: widget.user.id,
-        authorName: widget.user.name,
+
         tags: tags.isEmpty ? ['documento'] : tags,
         isPremium: _isPremium,
       );

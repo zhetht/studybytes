@@ -8,8 +8,7 @@ import '../../features/posts/models/post_model.dart';
 import '../../features/library/models/document_model.dart';
 import '../../features/auth/services/supabase_auth_service.dart';
 import '../../features/auth/models/user_model.dart';
-import '../../features/posts/models/post_model.dart';
-import '../../features/library/models/document_model.dart';
+
 
 class SupabaseService {
   final SupabaseAuthService _authService;
