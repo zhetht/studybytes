@@ -1,10 +1,16 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/post_model.dart';
+import '../../../core/services/service_locator.dart';
 import '../../../core/services/supabase_service.dart';
+
+
 import '../../../core/theme/app_theme.dart';
+
 import '../../../features/auth/bloc/auth_bloc.dart';
 import 'create_post_screen.dart';
 import '../../../../features/library/screens/upload_document_screen.dart';
@@ -17,7 +23,7 @@ class PostsScreen extends StatefulWidget {
 }
 
 class _PostsScreenState extends State<PostsScreen> {
-  final _service = SupabaseService();
+final _service = ServiceLocator().supabaseService;
   List<PostModel> _posts = [];
   bool _isLoading = true;
   String? _error;
@@ -60,12 +66,11 @@ class _PostsScreenState extends State<PostsScreen> {
     }
   }
 
-  Future<void> _toggleLike(String postId) async {
-    final authState = context.read<AuthBloc>().state;
-    final userId = authState is AuthAuthenticated ? authState.user.id : 'guest';
-
+Future<void> _toggleLike(String postId) async {
     try {
-      final updated = await _service.toggleLike(postId, userId);
+      final updated = await _service.toggleLike(postId);
+
+
       setState(() {
         final i = _posts.indexWhere((p) => p.id == postId);
         if (i != -1) _posts[i] = updated;
@@ -77,7 +82,9 @@ class _PostsScreenState extends State<PostsScreen> {
         if (i != -1) {
           final post = _posts[i];
           final likes = List<String>.from(post.likes);
-          likes.contains(userId) ? likes.remove(userId) : likes.add(userId);
+likes.contains(post.authorId) ? likes.remove(post.authorId) : likes.add(post.authorId);
+
+
           _posts[i] = post.copyWith(likes: likes);
         }
       });
