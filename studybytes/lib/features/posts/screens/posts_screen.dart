@@ -149,36 +149,9 @@ likes.contains(post.authorId) ? likes.remove(post.authorId) : likes.add(post.aut
                 },
               ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          final authState = context.read<AuthBloc>().state;
-          if (authState is! AuthAuthenticated) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Debes iniciar sesión para crear contenido')),
-            );
-            return;
-          }
-          final result = await Navigator.push<PostModel>(
-            context,
-            MaterialPageRoute(
-              builder: (_) => CreatePostScreen(user: authState.user),
-            ),
-          );
-          if (result != null) {
-            setState(() => _posts.insert(0, result));
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('¡Post publicado! 🎉')),
-            );
-          }
-        },
-        icon: const Icon(Icons.edit_outlined),
-        label: const Text('Crear Post'),
-        backgroundColor: AppTheme.primaryBlue,
-      ),
+
       bottomNavigationBar: BottomAppBar(
         color: AppTheme.cardDark,
-        shape: const CircularNotchedRectangle(),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Row(
@@ -206,10 +179,36 @@ likes.contains(post.authorId) ? likes.remove(post.authorId) : likes.add(post.aut
                   );
                 },
               ),
+              IconButton(
+                icon: const Icon(Icons.edit_outlined, color: Colors.white, size: 28),
+                tooltip: 'Crear Post',
+                onPressed: () async {
+                  final authState = context.read<AuthBloc>().state;
+                  if (authState is! AuthAuthenticated) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Debes iniciar sesión para crear contenido')),
+                    );
+                    return;
+                  }
+                  final result = await Navigator.push<PostModel>(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => CreatePostScreen(user: authState.user),
+                    ),
+                  );
+                  if (result != null) {
+                    setState(() => _posts.insert(0, result));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('¡Post publicado! 🎉')),
+                    );
+                  }
+                },
+              ),
             ],
           ),
         ),
       ),
+
     );
   }
 }
