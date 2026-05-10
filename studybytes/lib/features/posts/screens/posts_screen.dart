@@ -45,7 +45,7 @@ final _service = ServiceLocator().supabaseService;
         setState(() {
           _posts = PostModel.mockPosts();
           _isLoading = false;
-          _error = null; // silencioso en modo demo
+          _error = 'No se pudieron cargar los posts de Supabase: $e';
         });
       }
     }
