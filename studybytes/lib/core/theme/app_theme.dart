@@ -47,8 +47,7 @@ class AppTheme {
           color: Colors.white.withOpacity(0.7),
         ),
       ),
-      // ✅ CardTheme en lugar de CardThemeData (compatible con Flutter 3.22+)
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: cardDark,
         elevation: 0,
         shape: RoundedRectangleBorder(
