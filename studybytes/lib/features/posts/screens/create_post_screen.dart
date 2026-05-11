@@ -50,7 +50,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     });
 
     try {
-      final authorName = 'Anónimo';
+      const authorName = 'Anónimo';
 
       final created = await _service.createPost(
         title: title,

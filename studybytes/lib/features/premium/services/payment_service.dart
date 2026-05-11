@@ -17,11 +17,11 @@ class PaymentService {
         PremiumPlan(
           id: 'monthly',
           name: 'Mensual',
-          price: 9.99,
+          price: 99.99,
           period: 'mes',
           features: [
             'Acceso a todos los resúmenes premium',
-            'IA avanzada sin límites',
+            'IA avanzada',
             'Crear clubs privados',
             'Sin publicidad',
           ],
@@ -29,27 +29,26 @@ class PaymentService {
         PremiumPlan(
           id: 'yearly',
           name: 'Anual',
-          price: 89.99,
+          price: 1200.00,
           period: 'año',
           features: [
             'Todo lo del plan mensual',
             '2 meses gratis',
             'Soporte prioritario',
-            'Certificados de finalización',
           ],
           isPopular: true,
           savings: 25,
         ),
         PremiumPlan(
-          id: 'lifetime',
-          name: 'De por vida',
-          price: 299.99,
-          period: 'único',
+          id: 'institucional',
+          name: 'Institucional',
+          price: 49.99,
+          period: 'mensual por estiduante',
           features: [
             'Todo lo anterior',
             'Acceso vitalicio',
             'Actualizaciones gratuitas',
-            'Membresía VIP',
+            'Membresía STUDENT',
           ],
         ),
       ];

@@ -4,6 +4,7 @@ import '../../clubs/screens/clubs_screen.dart';
 import '../../posts/screens/posts_screen.dart';
 import '../../library/screens/library_screen.dart';
 import '../../profile/screens/profile_screen.dart';
+import '../../zenhub/screens/zenhub_screen.dart';
 import '../../../widgets/ai_bubble/ai_bubble_widget.dart';
 import '../../../core/theme/app_theme.dart';
 
@@ -21,6 +22,7 @@ class _MainPageState extends State<MainPage> {
     PostsScreen(),
     ClubsScreen(),
     LibraryScreen(),
+    ZenHubScreen(),   // ← nuevo
     ProfileScreen(),
   ];
 
@@ -28,31 +30,35 @@ class _MainPageState extends State<MainPage> {
     'StudyBytes',
     'Clubs de Estudio',
     'Mi Biblioteca',
+    'ZenHub',         // ← nuevo
     'Mi Perfil',
   ];
 
   final _navItems = const [
-    (Icons.article_outlined, Icons.article_rounded, 'Posts'),
-    (Icons.group_outlined, Icons.group_rounded, 'Clubs'),
-    (Icons.library_books_outlined, Icons.library_books_rounded, 'Biblioteca'),
-    (Icons.person_outline_rounded, Icons.person_rounded, 'Perfil'),
+    (Icons.article_outlined,      Icons.article_rounded,           'Posts'),
+    (Icons.group_outlined,        Icons.group_rounded,             'Clubs'),
+    (Icons.library_books_outlined,Icons.library_books_rounded,     'Biblioteca'),
+    (Icons.self_improvement,      Icons.self_improvement,          'ZenHub'),  // ← nuevo
+    (Icons.person_outline_rounded,Icons.person_rounded,            'Perfil'),
   ];
+
+  // Color de acento por sección
+  Color get _accentColor {
+    if (_selectedIndex == 3) return const Color(0xFF7C72E5); // ZenHub violeta
+    return AppTheme.primaryBlue;
+  }
 
   @override
   Widget build(BuildContext context) {
     final isWide = MediaQuery.of(context).size.width > 600;
-
-    if (isWide) {
-      return _buildWideLayout();
-    }
-    return _buildNarrowLayout();
+    return isWide ? _buildWideLayout() : _buildNarrowLayout();
   }
 
+  // ── Layout tablet / escritorio ───────────────────────────────────────────
   Widget _buildWideLayout() {
     return Scaffold(
       body: Row(
         children: [
-          // Side nav
           Container(
             width: 220,
             color: AppTheme.cardDark,
@@ -68,11 +74,8 @@ class _MainPageState extends State<MainPage> {
                         width: 36,
                         height: 36,
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              AppTheme.primaryBlue,
-                              AppTheme.lavender,
-                            ],
+                          gradient: LinearGradient(
+                            colors: [_accentColor, AppTheme.lavender],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
@@ -82,14 +85,11 @@ class _MainPageState extends State<MainPage> {
                             color: Colors.white, size: 20),
                       ),
                       const SizedBox(width: 10),
-                      Text(
-                        'StudyBytes',
-                        style: GoogleFonts.plusJakartaSans(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w800,
-                          fontSize: 16,
-                        ),
-                      ),
+                      Text('StudyBytes',
+                          style: GoogleFonts.plusJakartaSans(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 16)),
                     ],
                   ),
                 ),
@@ -99,9 +99,11 @@ class _MainPageState extends State<MainPage> {
                   final i = entry.key;
                   final item = entry.value;
                   final isSelected = _selectedIndex == i;
+                  final accent =
+                      i == 3 ? const Color(0xFF7C72E5) : AppTheme.primaryBlue;
                   return Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 2),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                     child: Material(
                       color: Colors.transparent,
                       borderRadius: BorderRadius.circular(12),
@@ -113,7 +115,7 @@ class _MainPageState extends State<MainPage> {
                               horizontal: 14, vertical: 12),
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? AppTheme.primaryBlue.withOpacity(0.15)
+                                ? accent.withOpacity(0.15)
                                 : Colors.transparent,
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -122,23 +124,20 @@ class _MainPageState extends State<MainPage> {
                               Icon(
                                 isSelected ? item.$2 : item.$1,
                                 color: isSelected
-                                    ? AppTheme.primaryBlue
+                                    ? accent
                                     : Colors.white.withOpacity(0.4),
                                 size: 20,
                               ),
                               const SizedBox(width: 12),
-                              Text(
-                                item.$3,
-                                style: TextStyle(
-                                  color: isSelected
-                                      ? AppTheme.primaryBlue
-                                      : Colors.white.withOpacity(0.4),
-                                  fontWeight: isSelected
-                                      ? FontWeight.w600
-                                      : FontWeight.normal,
-                                  fontSize: 14,
-                                ),
-                              ),
+                              Text(item.$3,
+                                  style: TextStyle(
+                                      color: isSelected
+                                          ? accent
+                                          : Colors.white.withOpacity(0.4),
+                                      fontWeight: isSelected
+                                          ? FontWeight.w600
+                                          : FontWeight.normal,
+                                      fontSize: 14)),
                             ],
                           ),
                         ),
@@ -150,11 +149,9 @@ class _MainPageState extends State<MainPage> {
             ),
           ),
           VerticalDivider(
-            width: 1,
-            thickness: 1,
-            color: Colors.white.withOpacity(0.06),
-          ),
-          // Content
+              width: 1,
+              thickness: 1,
+              color: Colors.white.withOpacity(0.06)),
           Expanded(
             child: Scaffold(
               backgroundColor: AppTheme.darkBg,
@@ -163,7 +160,8 @@ class _MainPageState extends State<MainPage> {
                 backgroundColor: AppTheme.darkBg,
               ),
               body: _screens[_selectedIndex],
-              floatingActionButton: const AiBubbleWidget(),
+              floatingActionButton:
+                  _selectedIndex != 4 ? const AiBubbleWidget() : null,
             ),
           ),
         ],
@@ -171,6 +169,7 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
+  // ── Layout móvil ─────────────────────────────────────────────────────────
   Widget _buildNarrowLayout() {
     return Scaffold(
       backgroundColor: AppTheme.darkBg,
@@ -181,8 +180,8 @@ class _MainPageState extends State<MainPage> {
               width: 28,
               height: 28,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppTheme.primaryBlue, AppTheme.lavender],
+                gradient: LinearGradient(
+                  colors: [_accentColor, AppTheme.lavender],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -197,23 +196,28 @@ class _MainPageState extends State<MainPage> {
         ),
       ),
       body: _screens[_selectedIndex],
-      floatingActionButton: _selectedIndex != 3
-          ? const AiBubbleWidget()
-          : null,
+      floatingActionButton:
+          _selectedIndex != 4 ? const AiBubbleWidget() : null,
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         onDestinationSelected: (i) => setState(() => _selectedIndex = i),
         backgroundColor: AppTheme.cardDark,
-        indicatorColor: AppTheme.primaryBlue.withOpacity(0.15),
+        indicatorColor: _selectedIndex == 3
+            ? const Color(0xFF7C72E5).withOpacity(0.15)
+            : AppTheme.primaryBlue.withOpacity(0.15),
         destinations: _navItems
-            .map(
-              (item) => NavigationDestination(
-                icon: Icon(item.$1),
-                selectedIcon: Icon(item.$2,
-                    color: AppTheme.primaryBlue),
-                label: item.$3,
-              ),
-            )
+            .asMap()
+            .entries
+            .map((e) {
+              final accent = e.key == 3
+                  ? const Color(0xFF7C72E5)
+                  : AppTheme.primaryBlue;
+              return NavigationDestination(
+                icon: Icon(e.value.$1),
+                selectedIcon: Icon(e.value.$2, color: accent),
+                label: e.value.$3,
+              );
+            })
             .toList(),
       ),
     );
