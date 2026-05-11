@@ -7,12 +7,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../core/services/service_locator.dart';
 import '../../../core/theme/app_theme.dart';
 
-import '../../../features/auth/models/user_model.dart';
-
-
 class CreatePostScreen extends StatefulWidget {
-  final UserModel user;
-  const CreatePostScreen({super.key, required this.user});
+  const CreatePostScreen({super.key});
 
   @override
   State<CreatePostScreen> createState() => _CreatePostScreenState();
@@ -23,7 +19,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
+
   final _tagsController = TextEditingController();
+
 
   bool _isPosting = false;
   String? _error;
@@ -52,11 +50,15 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     });
 
     try {
+      final authorName = 'Anónimo';
+
       final created = await _service.createPost(
         title: title,
         content: content,
+        authorName: authorName,
         tags: tags.isEmpty ? ['post'] : tags,
       );
+
 
       if (mounted) Navigator.pop(context, created);
     } catch (e) {
@@ -104,6 +106,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               maxLines: 6,
             ).animate().fadeIn(delay: 140.ms),
             const SizedBox(height: 16),
+            const SizedBox(height: 16),
             TextField(
               controller: _tagsController,
               style: const TextStyle(color: Colors.white),
@@ -113,6 +116,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 hintStyle: TextStyle(color: Colors.white.withOpacity(0.25)),
               ),
             ).animate().fadeIn(delay: 200.ms),
+
 
             const SizedBox(height: 20),
 

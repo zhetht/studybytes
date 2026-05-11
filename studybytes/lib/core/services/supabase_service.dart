@@ -17,6 +17,7 @@ class SupabaseService {
   SupabaseService({required SupabaseAuthService authService}) : _authService = authService;
 
 
+
   // ── GETTER PARA USUARIO ACTUAL ────────────────────────────────────────────
   
   /// Obtener el usuario autenticado actual
@@ -42,48 +43,52 @@ class SupabaseService {
   Future<PostModel> createPost({
     required String title,
     required String content,
+    required String authorName,
     required List<String> tags,
   }) async {
-    final currentUser = await getCurrentUser();
-    if (currentUser == null) throw Exception('Usuario no autenticado');
-    
     final res = await _client.from('posts').insert({
       'title': title,
       'content': content,
-      'author_id': currentUser.id,
-      'author_name': currentUser.name,
+      // Permitir creación sin login
+      'author_id': 'anonymous',
+      'author_name': authorName,
       'tags': tags,
-      'likes': [],
+      // En tu schema actual, toggleLike asume likes como entero
+      'likes': 0,
     }).select().single();
     return PostModel.fromSupabase(res);
   }
 
+
   Future<void> deletePost(String postId) async {
-    final currentUser = await getCurrentUser();
-    if (currentUser == null) throw Exception('Usuario no autenticado');
     await _client.from('posts').delete().eq('id', postId);
   }
 
+
   Future<PostModel> toggleLike(String postId) async {
-    final currentUser = await getCurrentUser();
-    if (currentUser == null) throw Exception('Usuario no autenticado');
-    final userId = currentUser.id;
-    
-    final res = await _client
+    // Schema real: posts.likes es integer
+    final updated = await _client
         .from('posts')
         .select('likes')
         .eq('id', postId)
         .single();
-    final likes = List<String>.from(res['likes'] ?? []);
-    likes.contains(userId) ? likes.remove(userId) : likes.add(userId);
-    final updated = await _client
+
+    final currentLikes = (updated['likes'] is int)
+        ? updated['likes'] as int
+        : int.tryParse(updated['likes']?.toString() ?? '') ?? 0;
+
+    final nextLikes = currentLikes + 1;
+
+    final row = await _client
         .from('posts')
-        .update({'likes': likes})
+        .update({'likes': nextLikes})
         .eq('id', postId)
         .select()
         .single();
-    return PostModel.fromSupabase(updated);
+
+    return PostModel.fromSupabase(row);
   }
+
 
   // ── DOCUMENTOS (modificados para usar usuario actual) ────────────────────
   

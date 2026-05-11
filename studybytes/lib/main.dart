@@ -54,25 +54,8 @@ class _AppRouter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(
-      builder: (context, state) {
-        if (state is AuthInitial || state is AuthLoading) {
-          return const Scaffold(
-            body: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.school_rounded, size: 56, color: AppTheme.primaryBlue),
-                  SizedBox(height: 20),
-                  CircularProgressIndicator(),
-                ],
-              ),
-            ),
-          );
-        }
-        if (state is AuthAuthenticated) return const MainPage();
-        return const LoginScreen();
-      },
-    );
+    // Sin autenticación obligatoria: siempre mostramos la app principal.
+    return const MainPage();
   }
 }
+
