@@ -12,11 +12,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 🔧 INSTALAR FLUTTER (en lugar de Node.js)
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0'
+          flutter-version: '3.22.0'
           channel: 'stable'
 
       - name: Install Flutter dependencies
@@ -25,13 +25,13 @@ jobs:
           flutter clean
           flutter pub get
 
-      # 📱 CONSTRUIR WEB
+
       - name: Build Flutter Web
         run: |
           cd ./studybytes
           flutter build web --release
 
-      # 🚀 DESPLEGAR A VERCEL
+
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
         with:
