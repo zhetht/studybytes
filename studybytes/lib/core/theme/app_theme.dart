@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
+  // Colores base
   static const Color darkBg = Color(0xFF0A0A0A);
   static const Color cardDark = Color(0xFF1A1A1A);
   static const Color primaryBlue = Color(0xFF4A90E2);
   static const Color mint = Color(0xFF00D4AA);
+  
+  // ✅ COLORES FALTANTES - AGREGAR ESTOS:
+  static const Color lavender = Color(0xFF9B59B6);  // Morado lavanda
+  static const Color pink = Color(0xFFE91E63);     // Rosa
+  
+  // colores adicionales que podrías necesitar
+  static const Color success = Color(0xFF4CAF50);
+  static const Color error = Color(0xFFE53935);
+  static const Color warning = Color(0xFFFFC107);
 
   static ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
@@ -46,7 +56,5 @@ class AppTheme {
         ),
       ),
     ),
-    
-
   );
 }
