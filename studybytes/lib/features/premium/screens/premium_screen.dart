@@ -97,17 +97,56 @@ class _PremiumScreenState extends State<PremiumScreen> {
             ).animate().fadeIn(delay: 150.ms),
             const SizedBox(height: 32),
 
-            // Plans
-            ...plans.asMap().entries.map((entry) {
-              final plan = entry.value;
-              final isSelected = _selectedPlanId == plan.id;
-              return _PlanCard(
-                plan: plan,
-                isSelected: isSelected,
-                index: entry.key,
-                onTap: () => setState(() => _selectedPlanId = plan.id),
-              );
-            }),
+            // Planes actualizados
+            _buildPlanCard(
+              id: 'monthly',
+              name: 'Premium Mensual',
+              price: 99.99,
+              period: 'mes',
+              features: [
+                'Acceso ilimitado a todos los cursos',
+                'Asistente IA avanzado',
+                'Descarga de materiales',
+                'Soporte prioritario 24/7',
+              ],
+              isPopular: false,
+              savings: null,
+              index: 0,
+            ),
+            
+            _buildPlanCard(
+              id: 'yearly',
+              name: 'Premium Anual',
+              price: 1199.99,
+              period: 'año',
+              features: [
+                'Todo del plan Mensual',
+                ' 2 meses GRATIS ',
+                'Acceso a contenido exclusivo',
+                'acceso anticipado a funciones',
+              ],
+              isPopular: true,
+              savings: 17,
+              index: 1,
+            ),
+            
+            _buildPlanCard(
+              id: 'institutional',
+              name: 'Plan Institucional',
+              price: 49.99,
+              period: 'mes/estudiante',
+              features: [
+                'Todo lo del plan Premium Anual',
+                'Panel de control para instituciones',
+                'Reportes de progreso',
+                'API personalizada',
+                'Soporte dedicado',
+              ],
+              isPopular: false,
+              savings: null,
+              index: 2,
+              isInstitutional: true,
+            ),
 
             const SizedBox(height: 24),
 
@@ -152,25 +191,22 @@ class _PremiumScreenState extends State<PremiumScreen> {
       ),
     );
   }
-}
 
-class _PlanCard extends StatelessWidget {
-  final PremiumPlan plan;
-  final bool isSelected;
-  final int index;
-  final VoidCallback onTap;
-
-  const _PlanCard({
-    required this.plan,
-    required this.isSelected,
-    required this.index,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildPlanCard({
+    required String id,
+    required String name,
+    required double price,
+    required String period,
+    required List<String> features,
+    required bool isPopular,
+    required int? savings,
+    required int index,
+    bool isInstitutional = false,
+  }) {
+    final isSelected = _selectedPlanId == id;
+    
     return GestureDetector(
-      onTap: onTap,
+      onTap: () => setState(() => _selectedPlanId = id),
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
@@ -186,41 +222,41 @@ class _PlanCard extends StatelessWidget {
             width: isSelected ? 1.5 : 1,
           ),
         ),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: 22,
-              height: 22,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: isSelected
-                      ? const Color(0xFFFFD700)
-                      : Colors.white.withOpacity(0.3),
-                  width: 2,
+            Row(
+              children: [
+                Container(
+                  width: 22,
+                  height: 22,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: isSelected
+                          ? const Color(0xFFFFD700)
+                          : Colors.white.withOpacity(0.3),
+                      width: 2,
+                    ),
+                    color: isSelected ? const Color(0xFFFFD700) : Colors.transparent,
+                  ),
+                  child: isSelected
+                      ? const Icon(Icons.check, size: 14, color: Colors.black)
+                      : null,
                 ),
-                color: isSelected ? const Color(0xFFFFD700) : Colors.transparent,
-              ),
-              child: isSelected
-                  ? const Icon(Icons.check, size: 14, color: Colors.black)
-                  : null,
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Row(
                     children: [
                       Text(
-                        plan.name,
+                        name,
                         style: GoogleFonts.plusJakartaSans(
                           color: Colors.white,
                           fontWeight: FontWeight.w700,
                           fontSize: 15,
                         ),
                       ),
-                      if (plan.isPopular) ...[
+                      if (isPopular) ...[
                         const SizedBox(width: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(
@@ -230,7 +266,7 @@ class _PlanCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: const Text(
-                            'Popular',
+                            'Más popular',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 10,
@@ -239,80 +275,105 @@ class _PlanCard extends StatelessWidget {
                           ),
                         ),
                       ],
+                      if (isInstitutional) ...[
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 7, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: AppTheme.mint,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: const Text(
+                            'Para empresas',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
-                  const SizedBox(height: 4),
-                  ...plan.features.take(2).map(
-                        (f) => Padding(
-                          padding: const EdgeInsets.only(top: 2),
-                          child: Row(
-                            children: [
-                              Icon(Icons.check_circle_outline,
-                                  size: 13,
-                                  color: AppTheme.mint.withOpacity(0.7)),
-                              const SizedBox(width: 5),
-                              Expanded(
-                                child: Text(
-                                  f,
-                                  style: TextStyle(
-                                    color: Colors.white.withOpacity(0.5),
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ),
-                            ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: '\$${price.toStringAsFixed(0)}',
+                            style: GoogleFonts.plusJakartaSans(
+                              color: isSelected
+                                  ? const Color(0xFFFFD700)
+                                  : Colors.white,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 22,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      '/ $period',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.4),
+                        fontSize: 11,
+                      ),
+                    ),
+                    if (savings != null)
+                      Container(
+                        margin: const EdgeInsets.only(top: 4),
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: AppTheme.mint.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          'Ahorra -${savings}%',
+                          style: TextStyle(
+                            color: AppTheme.mint,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ),
-                ],
-              ),
+                  ],
+                ),
+              ],
             ),
-            const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                RichText(
-                  text: TextSpan(
+            const SizedBox(height: 12),
+            // Features
+            Wrap(
+              spacing: 8,
+              runSpacing: 6,
+              children: features.map((feature) {
+                return Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      TextSpan(
-                        text: '\$${plan.price.toStringAsFixed(0)}',
-                        style: GoogleFonts.plusJakartaSans(
-                          color: isSelected
-                              ? const Color(0xFFFFD700)
-                              : Colors.white,
-                          fontWeight: FontWeight.w800,
-                          fontSize: 22,
+                      Icon(Icons.check_circle,
+                          size: 12, color: AppTheme.mint.withOpacity(0.7)),
+                      const SizedBox(width: 4),
+                      Text(
+                        feature,
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.7),
+                          fontSize: 11,
                         ),
                       ),
                     ],
                   ),
-                ),
-                Text(
-                  '/ ${plan.period}',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.4),
-                    fontSize: 11,
-                  ),
-                ),
-                if (plan.savings != null)
-                  Container(
-                    margin: const EdgeInsets.only(top: 4),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: AppTheme.mint.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      '-${plan.savings}%',
-                      style: TextStyle(
-                        color: AppTheme.mint,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-              ],
+                );
+              }).toList(),
             ),
           ],
         ),

@@ -29,7 +29,7 @@ class PaymentService {
         PremiumPlan(
           id: 'yearly',
           name: 'Anual',
-          price: 1200.00,
+          price: 1199.99,
           period: 'año',
           features: [
             'Todo lo del plan mensual',
@@ -46,8 +46,8 @@ class PaymentService {
           period: 'mensual por estiduante',
           features: [
             'Todo lo anterior',
-            'Acceso vitalicio',
-            'Actualizaciones gratuitas',
+            'Acceso anticipado a nuevas funciones',
+            'Contenido dedicado para instituciones',
             'Membresía STUDENT',
           ],
         ),
