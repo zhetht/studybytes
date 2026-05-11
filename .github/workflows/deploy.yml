@@ -32,8 +32,7 @@ jobs:
             static const String geminiApiKey = '${{ secrets.GEMINI_API_KEY }}';
           }
           EOF
-          echo "api_config.dart created"
-          cat lib/config/api_config.dart
+          echo "✅ api_config.dart created"
 
       - name: Install Flutter dependencies
         run: |
@@ -44,9 +43,10 @@ jobs:
         run: flutter build web --release
 
       - name: Deploy to Vercel
-        uses: vercel/action@v1
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          working-directory: ./studybytes/build/web
+        run: |
+          npm install -g vercel@latest
+          cd build/web
+          vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --yes
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
