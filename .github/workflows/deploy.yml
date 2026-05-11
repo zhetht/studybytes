@@ -45,8 +45,7 @@ jobs:
       - name: Deploy to Vercel
         run: |
           npm install -g vercel@latest
-          cd ./studybytes/build/web
-          vercel --prod --token ${{ secrets.VERCEL_TOKEN }} --yes
+          vercel ./studybytes/build/web --prod --token ${{ secrets.VERCEL_TOKEN }} --yes
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
