@@ -22,7 +22,6 @@ jobs:
           cache: true
 
       # ✅ Genera api_config.dart con los valores de GitHub Secrets
-      # El archivo está en .gitignore, así que lo creamos aquí en el runner
       - name: Generate api_config.dart from secrets
         working-directory: studybytes
         run: |
@@ -40,10 +39,6 @@ jobs:
         working-directory: studybytes
         run: flutter pub get
 
-      - name: Flutter clean
-        working-directory: studybytes
-        run: flutter clean
-
       - name: Build Web
         working-directory: studybytes
         run: flutter build web --release --base-href /
@@ -54,5 +49,6 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           working-directory: ./studybytes/build/web
           vercel-args: '--prod'
