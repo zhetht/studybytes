@@ -3,14 +3,13 @@ import 'package:equatable/equatable.dart';
 import '../models/user_model.dart';
 import '../services/supabase_auth_service.dart';
 
-// Events
+// Events (igual)
 abstract class AuthEvent extends Equatable {
   @override
   List<Object?> get props => [];
 }
 
 class AuthCheckRequested extends AuthEvent {}
-
 class AuthLoginRequested extends AuthEvent {
   final String email;
   final String password;
@@ -18,7 +17,6 @@ class AuthLoginRequested extends AuthEvent {
   @override
   List<Object?> get props => [email, password];
 }
-
 class AuthRegisterRequested extends AuthEvent {
   final String email;
   final String password;
@@ -27,17 +25,14 @@ class AuthRegisterRequested extends AuthEvent {
   @override
   List<Object?> get props => [email, password, name];
 }
-
 class AuthLogoutRequested extends AuthEvent {}
-
 class AuthUpgradePremium extends AuthEvent {}
 
-// States
+// States (igual)
 abstract class AuthState extends Equatable {
   @override
   List<Object?> get props => [];
 }
-
 class AuthInitial extends AuthState {}
 class AuthLoading extends AuthState {}
 class AuthAuthenticated extends AuthState {
@@ -54,9 +49,9 @@ class AuthError extends AuthState {
   List<Object?> get props => [message];
 }
 
-// Bloc
+// Bloc (ARREGLADO)
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-final SupabaseAuthService _authService;
+  final SupabaseAuthService _authService;
 
   AuthBloc(this._authService) : super(AuthInitial()) {
     on<AuthCheckRequested>(_onCheckRequested);
@@ -69,35 +64,48 @@ final SupabaseAuthService _authService;
   Future<void> _onCheckRequested(
       AuthCheckRequested event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
-    final user = await _authService.getCurrentUser();
-    if (user != null) {
-      emit(AuthAuthenticated(user));
-    } else {
-      emit(AuthUnauthenticated());
+    try {
+      final user = await _authService.getCurrentUser();
+      if (user != null) {
+        emit(AuthAuthenticated(user));
+      } else {
+        emit(AuthUnauthenticated());
+      }
+    } catch (e) {
+      emit(AuthError(e.toString()));
     }
   }
 
   Future<void> _onLoginRequested(
       AuthLoginRequested event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
-    final user =
-        await _authService.signInWithEmail(event.email, event.password);
-    if (user != null) {
-      emit(AuthAuthenticated(user));
-    } else {
-      emit(AuthError('Correo o contraseña incorrectos'));
+    try {
+      final user = await _authService.signInWithEmail(event.email, event.password);
+      if (user != null) {
+        emit(AuthAuthenticated(user));
+      } else {
+        emit(AuthError('Correo o contraseña incorrectos'));
+      }
+    } catch (e) {
+      // Ahora capturamos la excepción real del servicio
+      emit(AuthError(e.toString()));
     }
   }
 
   Future<void> _onRegisterRequested(
       AuthRegisterRequested event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
-    final user = await _authService.signUpWithEmail(
-        event.email, event.password, event.name);
-    if (user != null) {
-      emit(AuthAuthenticated(user));
-    } else {
-      emit(AuthError('Usuario ya existe. Usa "Iniciar Sesión" en lugar de registrarte.'));
+    try {
+      final user = await _authService.signUpWithEmail(
+          event.email, event.password, event.name);
+      if (user != null) {
+        emit(AuthAuthenticated(user));
+      } else {
+        emit(AuthError('Error al crear la cuenta. Intenta nuevamente.'));
+      }
+    } catch (e) {
+      // Mostramos el mensaje real del error
+      emit(AuthError(e.toString()));
     }
   }
 
@@ -111,8 +119,14 @@ final SupabaseAuthService _authService;
       AuthUpgradePremium event, Emitter<AuthState> emit) async {
     if (state is AuthAuthenticated) {
       final current = (state as AuthAuthenticated).user;
-      await _authService.upgradeToPremium(current.id);
-      emit(AuthAuthenticated(current.copyWith(isPremium: true)));
+      emit(AuthLoading());
+      try {
+        await _authService.upgradeToPremium(current.id);
+        emit(AuthAuthenticated(current.copyWith(isPremium: true)));
+      } catch (e) {
+        emit(AuthError('Error al actualizar a premium: ${e.toString()}'));
+        emit(AuthAuthenticated(current)); // Volvemos al estado anterior
+      }
     }
   }
 }
