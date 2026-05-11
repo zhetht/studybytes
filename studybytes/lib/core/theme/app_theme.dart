@@ -47,42 +47,10 @@ class AppTheme {
           color: Colors.white.withOpacity(0.7),
         ),
       ),
-      cardTheme: CardTheme(
-        color: cardDark,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: Colors.white.withOpacity(0.08), width: 1),
-        ),
-      ),
-      appBarTheme: AppBarTheme(
-        backgroundColor: darkBg,
-        elevation: 0,
-        centerTitle: false,
-        titleTextStyle: GoogleFonts.plusJakartaSans(
-          fontSize: 20,
-          fontWeight: FontWeight.w700,
-          color: Colors.white,
-        ),
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      navigationRailTheme: NavigationRailThemeData(
-        backgroundColor: cardDark,
-        selectedIconTheme: const IconThemeData(color: primaryBlue),
-        unselectedIconTheme:
-            IconThemeData(color: Colors.white.withOpacity(0.4)),
-        selectedLabelTextStyle: GoogleFonts.spaceGrotesk(
-          color: primaryBlue,
-          fontWeight: FontWeight.w600,
-        ),
-        unselectedLabelTextStyle: GoogleFonts.spaceGrotesk(
-          color: Colors.white.withOpacity(0.4),
-        ),
-        indicatorColor: primaryBlue.withOpacity(0.15),
-      ),
+      // ✅ FIXED: properly assigned InputDecorationTheme
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: Colors.white.withOpacity(0.06),
+        fillColor: Colors.white.withOpacity(0.05),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
@@ -98,14 +66,23 @@ class AppTheme {
         hintStyle: TextStyle(color: Colors.white.withOpacity(0.3)),
         labelStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
       ),
+      // ✅ FIXED: CardThemeData (not CardTheme) for Flutter 3.22+
+      cardTheme: CardThemeData(
+        color: cardDark,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: Colors.white.withOpacity(0.06)),
+        ),
+      ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryBlue,
           foregroundColor: Colors.white,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          padding:
-              const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           textStyle: GoogleFonts.spaceGrotesk(
             fontWeight: FontWeight.w600,
             fontSize: 15,
@@ -120,8 +97,7 @@ class AppTheme {
           fontWeight: FontWeight.w500,
         ),
         side: BorderSide.none,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: primaryBlue,
@@ -129,10 +105,8 @@ class AppTheme {
       ),
       snackBarTheme: SnackBarThemeData(
         backgroundColor: cardDark,
-        contentTextStyle:
-            GoogleFonts.spaceGrotesk(color: Colors.white),
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10)),
+        contentTextStyle: GoogleFonts.spaceGrotesk(color: Colors.white),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         behavior: SnackBarBehavior.floating,
       ),
       dividerTheme: DividerThemeData(
