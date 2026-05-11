@@ -21,7 +21,6 @@ jobs:
           channel: 'stable'
           cache: true
 
-      # ✅ Genera api_config.dart con los valores de GitHub Secrets
       - name: Generate api_config.dart from secrets
         working-directory: studybytes
         run: |
@@ -44,11 +43,10 @@ jobs:
         run: flutter build web --release --base-href /
 
       - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          working-directory: ./studybytes/build/web
-          vercel-args: '--prod'
+        run: |
+          npm install -g vercel@latest
+          cd ./studybytes/build/web
+          vercel --prod --token ${{ secrets.VERCEL_TOKEN }} --yes
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
