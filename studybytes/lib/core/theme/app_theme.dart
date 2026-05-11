@@ -3,13 +3,13 @@ import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   // Brand Colors
-  static const Color lavender = Color(0xFFDCD6F7);
-  static const Color mint = Color(0xFFD7F2E3);
-  static const Color pink = Color(0xFFF7C9CC);
+  static const Color lavender    = Color(0xFFDCD6F7);
+  static const Color mint        = Color(0xFFD7F2E3);
+  static const Color pink        = Color(0xFFF7C9CC);
   static const Color primaryBlue = Color(0xFF4A6CF7);
-  static const Color darkBg = Color(0xFF0F0F1A);
-  static const Color cardDark = Color(0xFF1A1A2E);
-  static const Color cardLight = Color(0xFFF8F7FF);
+  static const Color darkBg      = Color(0xFF0F0F1A);
+  static const Color cardDark    = Color(0xFF1A1A2E);
+  static const Color cardLight   = Color(0xFFF8F7FF);
 
   static ThemeData get darkTheme {
     return ThemeData(
@@ -47,7 +47,8 @@ class AppTheme {
           color: Colors.white.withOpacity(0.7),
         ),
       ),
-      cardTheme: CardThemeData(
+      // ✅ CardTheme en lugar de CardThemeData (compatible con Flutter 3.22+)
+      cardTheme: CardTheme(
         color: cardDark,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -69,7 +70,8 @@ class AppTheme {
       navigationRailTheme: NavigationRailThemeData(
         backgroundColor: cardDark,
         selectedIconTheme: const IconThemeData(color: primaryBlue),
-        unselectedIconTheme: IconThemeData(color: Colors.white.withOpacity(0.4)),
+        unselectedIconTheme:
+            IconThemeData(color: Colors.white.withOpacity(0.4)),
         selectedLabelTextStyle: GoogleFonts.spaceGrotesk(
           color: primaryBlue,
           fontWeight: FontWeight.w600,
@@ -101,8 +103,10 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryBlue,
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          padding:
+              const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           textStyle: GoogleFonts.spaceGrotesk(
             fontWeight: FontWeight.w600,
             fontSize: 15,
@@ -117,7 +121,8 @@ class AppTheme {
           fontWeight: FontWeight.w500,
         ),
         side: BorderSide.none,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: primaryBlue,
@@ -125,8 +130,10 @@ class AppTheme {
       ),
       snackBarTheme: SnackBarThemeData(
         backgroundColor: cardDark,
-        contentTextStyle: GoogleFonts.spaceGrotesk(color: Colors.white),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        contentTextStyle:
+            GoogleFonts.spaceGrotesk(color: Colors.white),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10)),
         behavior: SnackBarBehavior.floating,
       ),
       dividerTheme: DividerThemeData(
