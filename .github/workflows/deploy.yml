@@ -24,6 +24,7 @@ jobs:
 
       - name: Create api_config.dart from secrets
         run: |
+          mkdir -p lib/config
           cat > lib/config/api_config.dart << EOF
           class ApiConfig {
             static const String supabaseUrl = '${{ secrets.SUPABASE_URL }}';
