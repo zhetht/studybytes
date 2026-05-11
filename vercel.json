@@ -1,7 +1,16 @@
 {
-  "framework": "nextjs",
-  "buildCommand": "npm run build",
-  "outputDirectory": ".next",
-  "installCommand": "npm install",
-  "devCommand": "npm run dev"
+  "version": 2,
+  "name": "studybytes",
+  "builds": [
+    {
+      "src": "studybytes/build/web/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/studybytes/build/web/$1"
+    }
+  ]
 }
