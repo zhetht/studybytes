@@ -36,7 +36,6 @@ class StudyBytesApp extends StatelessWidget {
       create: (_) => SupabaseAuthService(),
       child: BlocProvider(
         create: (context) => AuthBloc(context.read<SupabaseAuthService>())
-
           ..add(AuthCheckRequested()),
         child: MaterialApp(
           title: 'StudyBytes',
@@ -54,8 +53,25 @@ class _AppRouter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Sin autenticación obligatoria: siempre mostramos la app principal.
-    return const MainPage();
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        // Mientras verifica autenticación
+        if (state is AuthLoading) {
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+        
+        // Usuario autenticado
+        if (state is AuthAuthenticated) {
+          return const MainPage();
+        }
+        
+        // Usuario no autenticado o error
+        return const LoginScreen();
+      },
+    );
   }
 }
-
