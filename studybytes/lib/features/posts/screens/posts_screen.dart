@@ -40,10 +40,9 @@ final _service = ServiceLocator().supabaseService;
       final posts = await _service.fetchPosts();
       if (mounted) setState(() { _posts = posts; _isLoading = false; });
     } catch (e) {
-      // Si Supabase no está configurado, carga datos mock
       if (mounted) {
         setState(() {
-          _posts = PostModel.mockPosts();
+          _posts = [];
           _isLoading = false;
           _error = 'No se pudieron cargar los posts de Supabase: $e';
         });
@@ -76,16 +75,12 @@ Future<void> _toggleLike(String postId) async {
         if (i != -1) _posts[i] = updated;
       });
     } catch (_) {
-      // fallback local
+      // fallback local (ya no manejamos likes como lista en el schema real)
       setState(() {
         final i = _posts.indexWhere((p) => p.id == postId);
         if (i != -1) {
           final post = _posts[i];
-          final likes = List<String>.from(post.likes);
-likes.contains(post.authorId) ? likes.remove(post.authorId) : likes.add(post.authorId);
-
-
-          _posts[i] = post.copyWith(likes: likes);
+          _posts[i] = post.copyWith(likes: post.likes + 1);
         }
       });
     }
@@ -232,7 +227,9 @@ class _PostCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isAuthor = post.authorId == currentUserId;
-    final isLiked = post.likes.contains(currentUserId);
+    final isLiked = false;
+
+
 
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
