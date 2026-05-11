@@ -8,10 +8,13 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./studybytes
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -19,18 +22,25 @@ jobs:
           flutter-version: '3.22.0'
           channel: 'stable'
 
+      - name: Create api_config.dart from secrets
+        run: |
+          cat > lib/config/api_config.dart << EOF
+          class ApiConfig {
+            static const String supabaseUrl = '${{ secrets.SUPABASE_URL }}';
+            static const String supabaseAnonKey = '${{ secrets.SUPABASE_ANON_KEY }}';
+            static const String geminiApiKey = '${{ secrets.GEMINI_API_KEY }}';
+          }
+          EOF
+          echo "✅ api_config.dart created"
+          cat lib/config/api_config.dart
+
       - name: Install Flutter dependencies
         run: |
-          cd ./studybytes
           flutter clean
           flutter pub get
 
-
       - name: Build Flutter Web
-        run: |
-          cd ./studybytes
-          flutter build web --release
-
+        run: flutter build web --release
 
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
@@ -41,4 +51,3 @@ jobs:
           vercel-args: '--prod'
           scope: ${{ secrets.VERCEL_ORG_ID }}
           working-directory: ./studybytes/build/web
-
